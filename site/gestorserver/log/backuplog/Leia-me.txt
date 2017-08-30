@@ -1,0 +1,1 @@
+Nesta pasta contera todos os logs ja processados por data e horario de processamento, caso necessario podera fazer uma consulta detalhada.
