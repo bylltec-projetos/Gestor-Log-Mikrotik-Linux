@@ -1,0 +1,6 @@
+Otimizar tabela mysql para isso execulte os comandos abaixo no banco de dados pelo phpmyadmin
+Este cria uma index para a celula Message onde contem as urls de acesso
+CREATE INDEX index_Message ON SystemEvents (Message(40));
+Este cria index para o campo SysLogTag que tem o campo de tipo e onde veio a linha do log
+CREATE INDEX index_SysLogTag ON SystemEvents (SysLogTag(13))
+

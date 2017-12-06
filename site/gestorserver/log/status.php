@@ -14,7 +14,10 @@ if (!isset($_SESSION['UsuarioID']) OR ($_SESSION['UsuarioNivel'] > $nivel_necess
 require '../../Connections/site.php';
 mysql_select_db($database_site, $site);
 
- 
+
+
+
+
 $sqlbuscausuario = "SELECT * FROM `usuario_log` ";
 
 $querybuscausuario = mysql_query($sqlbuscausuario) or die ("sql filtro grupo erro");
@@ -48,7 +51,10 @@ $totallog = mysql_fetch_assoc($querybuscalog)
 							status
 						</th>
 						<th>
-							
+							Espaço Livre
+						</th>
+						<th>
+							Espaço Total
 						</th>
 					</tr>
 				</thead>
@@ -64,7 +70,34 @@ $totallog = mysql_fetch_assoc($querybuscalog)
 							Ativo
 						</td>
 						<td>
-							
+						<?php 
+
+						$espaco_disco = disk_free_space("."); 
+					    $si_prefix = array( 'B', 'KB', 'MB', 'GB', 'TB', 'EB', 'ZB', 'YB' );
+					    $base = 1024;
+					    $class = min((int)log($espaco_disco , $base) , count($si_prefix) - 1);
+					    //echo $bytes . '<br />';
+					    echo sprintf('%1.2f' , $espaco_disco / pow($base,$class)) . ' ' . $si_prefix[$class] . '<br />';
+						?>	
+						</td>
+						<td>
+							<?php 
+							$disco_total = disk_total_space("/");
+							$si_prefix = array( 'B', 'KB', 'MB', 'GB', 'TB', 'EB', 'ZB', 'YB' );
+					    	$base = 1024;
+					    	$class = min((int)log($disco_total , $base) , count($si_prefix) - 1);
+					    	//echo $bytes . '<br />';
+					    	echo sprintf('%1.2f' , $disco_total / pow($base,$class)) . ' ' . $si_prefix[$class] . '<br />';
+							/*
+							function getSymbolByQuantity($bytes) {
+								    $symbols = array('B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB');
+								    $exp = floor(log($bytes)/log(1024));
+
+								    return sprintf('%.2f '.$symbol[$exp], ($bytes/pow(1024, floor($exp))));
+								}
+							echo getSymbolByQuantity($disco_total);	
+							*/
+							?>
 						</td>
 					</tr>
 					
@@ -73,6 +106,9 @@ $totallog = mysql_fetch_assoc($querybuscalog)
 					
 				</tbody>
 			</table>
+			<?php 
+			require("backuplog/listar_arquivos.php");
+			?>
 			
 		</div>
         </div>
@@ -85,7 +121,7 @@ $totallog = mysql_fetch_assoc($querybuscalog)
 </html>
 
 
-<!--<html>
+<html>
 <head>
 
 <style>
@@ -94,19 +130,15 @@ $totallog = mysql_fetch_assoc($querybuscalog)
 </style>
 </head>
 <body>
-     <a onClick="document.getElementById('pop').style.display='block';" href="/site/gestorserver/log/?pagina=status">Processar Log</a>
 <div id="pop">
 <a href="#" onClick="document.getElementById('pop').style.display='none';"></a>
 <br />
 	
 
 		<p class="align-center"><img src="/site/images/progresso.gif" width="20" height="20" alt="progress"/>Aguarde... </p> 
-	<p>Processando Log</p> 	
+	<p>Processando Backup</p> 	
       
-   		
-		
-
-</div>-->
+</div>
 
 
 <html>

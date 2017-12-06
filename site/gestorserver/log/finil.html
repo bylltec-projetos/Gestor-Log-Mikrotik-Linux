@@ -1,0 +1,40 @@
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/funnel.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+
+<div id="container" style="min-width: 410px; max-width: 600px; height: 400px; margin: 0 auto"></div>
+
+<script type="text/javascript">
+Highcharts.chart('container', {
+    chart: {
+        type: 'funnel'
+    },
+    title: {
+        text: 'Sales funnel'
+    },
+    plotOptions: {
+        series: {
+            dataLabels: {
+                enabled: true,
+                format: '<b>{point.name}</b> ({point.y:,.0f})',
+                color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black',
+                softConnector: true
+            },
+            center: ['40%', '50%'],
+            neckWidth: '20%',
+            neckHeight: '0%',
+            width: '50%'
+        }
+    },
+    legend: {
+        enabled: false
+    },
+    series: [{
+        name: 'Unique users',
+        data: [
+            ['api.globo.com',2923],['s2.glbimg.com',510],['horizon.globo.com',271],['dnl-10.geo.kaspersky.com',270],['b.scorecardresearch.com',250],['dnl-19.geo.kaspersky.com',123],['dnl-01.geo.kaspersky.com',120],['dnl-08.geo.kaspersky.com',116],['dnl-02.geo.kaspersky.com',109],['dnl-11.geo.kaspersky.com',105],['dnl-09.geo.kaspersky.com',104],['s.glbimg.com',72],['dnl-12.geo.kaspersky.com',40],['dnl-03.geo.kaspersky.com',29],['s03.video.glbimg.com',19],['ss.symcd.com',17],['ocsp.godaddy.com',16],['crl.microsoft.com',16],['s02.video.glbimg.com',16],['s01.video.glbimg.com',15],['s3.glbimg.com',15],['pagead2.googlesyndication.com',13],['r1---sn-u8j5cv5obva5-a5ql.gvt1.com',10],['csi.gstatic.com',10],['beacon.krxd.net',9],['tags.tiqcdn.com',9],['cdn.content.prod.cms.msn.com',9],['comentarios.globo.com',8],['s04.video.glbimg.com',8],['cocoon.globo.com',8],
+        ]
+    }]
+});
+
+</script>

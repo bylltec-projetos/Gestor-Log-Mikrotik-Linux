@@ -1,0 +1,4 @@
+caminhe ate o local do arquivo de backup
+/var/www/html/site/gestorserver/log/backuplog#
+faça o comando abaixo como root apontando o arquivo de backup
+mysql -u root -p --database=Syslog < 20171129122458.sql

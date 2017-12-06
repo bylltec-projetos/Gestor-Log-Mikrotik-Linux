@@ -22,7 +22,7 @@ $rsenha = mysql_real_escape_string($_POST["rsenha"]);
 //$rsenha = sha1($_POST["rsenha"]);
 $iduser = $_SESSION['iduser'];
 //demo nao pode mudar a senha 1 para demo e 0 para sistema valido
-$demo = 1;
+$demo = 0;
 //valida��o de dados
 if ($nsenha == "") {
     echo '<head><meta http-equiv=refresh content="0; URL=/site/gestorserver/log/?pagina=alterar_senha"></head>';

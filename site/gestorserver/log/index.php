@@ -96,7 +96,7 @@ if (!isset($_SESSION['UsuarioID']) OR ($_SESSION['UsuarioNivel'] > $nivel_necess
 					
 					<ul class="nav navbar-nav navbar-right">
 						<li>
-							<a href="https://www.bylltec.com.br/site/home.php?pagina=suporte&sistema=gestorlog">Suporte - Versao 0.0.2</a>
+							<a href="https://www.bylltec.com.br/site/home.php?pagina=suporte&sistema=gestorlog">Suporte - Versao 0.0.3</a>
 						</li>
 						<li>
 							<a href="/site/login/logout.php">Sair</a>
