@@ -18,7 +18,7 @@ $comando = "mysqldump -u $username_site -p$password_site Syslog > /var/www/html/
 //echo $comando;
 $output = shell_exec($comando);
 
-$comando_compactar = "cd /var/www/html/site/gestorserver/log/backuplog/ ; /bin/tar czvf mysql.bkp_$data_hora.tar.gz $data_hora.sql; /bin/rm $data_hora.sql"
+$comando_compactar = "cd /var/www/html/site/gestorserver/log/backuplog/ ; tar -czvf mysql.bkp_$data_hora.tar.gz $data_hora.sql; rm $data_hora.sql"
 $saida_comando_compactar = shell_exec($comando_compactar);
 
 
