@@ -25,6 +25,9 @@ $sql_limpa_tabela = "TRUNCATE TABLE SystemEvents";
 
 mysql_query($sql_limpa_tabela) or die ("Erro ao truncate contate o administrador.");
 
+$saida_comando_limpar_arquivos = shell_exec("cd /var/log/; rm syslog*; rm messages*; rm user*; /etc/init.d/apache2 restart; /etc/init.d/mysql restart;");
+
+
 //para colocar o agendamento use a linha abaixo com o comando nano /etc/crontab
 //0 3 * * * root php /var/www/html/Gestor-Log-Mikrotik-Linux/site/gestorserver/log/backuplog/action_backup_agendado.php
 
