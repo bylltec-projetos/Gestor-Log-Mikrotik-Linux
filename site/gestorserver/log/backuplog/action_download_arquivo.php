@@ -32,12 +32,12 @@ header('Content-Description: File Transfer');
 header('Content-Disposition: attachment; filename="'.$arquivoNome.'"');
 header('Content-Type: application/octet-stream');
 header('Content-Transfer-Encoding: binary');
-header('Content-Length: ' . filesize($arquivoNome));
+header('Content-Length: ' . filesize($arquivoLocal));
 header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
 header('Pragma: public');
 header('Expires: 0');
 // Envia o arquivo para o cliente
 ob_end_clean(); //essas duas linhas antes do readfile
 flush();
-readfile($arquivoNome);
+readfile($arquivoLocal);
 
