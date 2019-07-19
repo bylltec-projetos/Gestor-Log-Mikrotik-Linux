@@ -44,7 +44,7 @@ function tamanho_arquivo($arquivo) {
 <?php
 	//echo 'GLOB'.PHP_EOL;
 	//chdir( '.' );
-	chdir( '/var/www/html/site/gestorserver/log/backuplog/' );
+	chdir( '/var/www/html/Gestor-Log-Mikrotik-Linux/site/gestorserver/log/backuplog/' );
 	$arquivos = glob("{*.txt,*.sql,*tar.gz}", GLOB_BRACE);// aqui vai os tipos de arquivos por extensao a ser listado separado por virgula
 	sort($arquivos);
 	foreach($arquivos as $img){
