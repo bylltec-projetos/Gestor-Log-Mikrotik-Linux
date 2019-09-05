@@ -20,7 +20,7 @@ $queryselecionausuariolog = mysql_query($sqlselecionausuariolog) or die ("erro u
 $itens_por_pagina = 10000;
 
 // pegar a pagina atual
-$pagina = intval($_GET['pagina_limite']);
+$pagina_limite = intval($_GET['pagina_limite']);
 
 $palavra = mysql_real_escape_string($_REQUEST['palavra']);
 $ip = mysql_real_escape_string($_REQUEST['ipusuariolog']);
@@ -35,7 +35,7 @@ if($data1 != "" || $data2 != ""){
 //SELECT * FROM `SystemEvents` WHERE `Message` LIKE '%$palavra%' and `Message` LIKE '%$ip%' and `ReceivedAt`>='$data1 00:00:00' and `ReceivedAt`<='$data2 23:59:59' ORDER BY `ID` DESC
 // puxar SystemEventss do banco
 
-$sql_code = "SELECT * FROM `SystemEvents` WHERE `Message` LIKE '%$palavra%' and `Message` LIKE '%$ip%' and `ReceivedAt`>='$data1 00:00:00' and `ReceivedAt`<='$data2 23:59:59' ORDER BY `ID` DESC LIMIT $pagina, $itens_por_pagina";
+$sql_code = "SELECT * FROM `SystemEvents` WHERE `Message` LIKE '%$palavra%' and `Message` LIKE '%$ip%' and `ReceivedAt`>='$data1 00:00:00' and `ReceivedAt`<='$data2 23:59:59' ORDER BY `ID` DESC LIMIT $pagina_limite, $itens_por_pagina";
 $execute = $mysqli->query($sql_code) or die($mysqli->error);
 $SystemEvents = $execute->fetch_assoc();
 $num = $execute->num_rows;
@@ -149,7 +149,7 @@ $num_paginas = ceil($num_total/$itens_por_pagina);
 				    <?php 
 				    for($i=0;$i<$num_paginas;$i++){
 				    $estilo = "";
-				    if($pagina == $i)
+				    if($pagina_limite == $i)
 				    	$estilo = "class=\"active\"";
 				    ?>
 				    <li <?php echo $estilo; ?> ><a href="?pagina=relatorio&pagina_limite=<?php echo $i; ?>"><?php echo $i+1; ?></a></li>
@@ -173,4 +173,3 @@ $num_paginas = ceil($num_total/$itens_por_pagina);
   	<script src="js/bootstrap.min.js"></script>
   </body>
   </html>
-
