@@ -32,6 +32,11 @@ if($data1 != "" || $data2 != ""){
 }
   $data1 = $_SESSION['data1'];
   $data2 = $_SESSION['data2'];
+if($palavra != ""){ 
+  $_SESSION['palavra'] = $palavra;
+}
+$palavra = $_SESSION['palavra'];
+
 //SELECT * FROM `SystemEvents` WHERE `Message` LIKE '%$palavra%' and `Message` LIKE '%$ip%' and `ReceivedAt`>='$data1 00:00:00' and `ReceivedAt`<='$data2 23:59:59' ORDER BY `ID` DESC
 // puxar SystemEventss do banco
 
