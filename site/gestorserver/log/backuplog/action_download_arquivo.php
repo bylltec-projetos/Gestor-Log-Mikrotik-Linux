@@ -17,7 +17,7 @@ set_time_limit(0);
 // Arqui você faz as validações e/ou pega os dados do banco de dados
 //$aquivoNome = 'imagem.jpg'; // nome do arquivo que será enviado p/ download
 echo $arquivoNome = $_REQUEST["arquivo"];
-echo $arquivoLocal = '/var/www/html/site/gestorserver/log/backuplog/'.$arquivoNome; // caminho absoluto do arquivo
+echo $arquivoLocal = '/var/www/html/Gestor-Log-Mikrotik-Linux/site/gestorserver/log/backuplog/'.$arquivoNome; // caminho absoluto do arquivo
 // Verifica se o arquivo não existe
 if (!file_exists($arquivoLocal)) {
 // Exiba uma mensagem de erro caso ele não exista
