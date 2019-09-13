@@ -4,8 +4,9 @@ require_once'/var/www/html/Gestor-Log-Mikrotik-Linux/site/Connections/site.php';
 mysql_select_db($database_site, $site);
 $data_hora = date("YmdHis");
 
-$comando = "mysqldump -u $username_site -p$password_site Syslog > /var/www/html/Gestor-Log-Mikrotik-Linux/site/gestorserver/log/backuplog/$data_hora.sql";
+//$comando = "mysqldump -u $username_site -p$password_site Syslog > /var/www/html/Gestor-Log-Mikrotik-Linux/site/gestorserver/log/backuplog/$data_hora.sql";
 //echo $comando;
+$comando = "mysqldump -u $username_site -p$password_site Syslog > /var/backups/gestorlog/diario/$data_hora.sql";
 
 $output = shell_exec($comando);
 //echo $output;
@@ -13,7 +14,7 @@ $output = shell_exec($comando);
 //echo $comando_compactar = "cd /var/www/html/Gestor-Log-Mikrotik-Linux/site/gestorserver/log/backuplog/ ;/bin/tar -czvf mysql.bkp_data_hora.tar.gz data_hor$
 
 //$comando_compactar = ('ls -lart');
-$saida_comando_compactar = shell_exec("cd /var/www/html/Gestor-Log-Mikrotik-Linux/site/gestorserver/log/backuplog/;
+$saida_comando_compactar = shell_exec("cd /var/backups/gestorlog/diario/;
  /bin/tar -czvf $data_hora.tar.gz $data_hora.sql; rm $data_hora.sql");
 
 
