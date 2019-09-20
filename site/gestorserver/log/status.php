@@ -13,27 +13,14 @@ if (!isset($_SESSION['UsuarioID']) OR ($_SESSION['UsuarioNivel'] > $nivel_necess
 <?php
 require '../../Connections/site.php';
 mysql_select_db($database_site, $site);
-
-
-
-
-
 $sqlbuscausuario = "SELECT * FROM `usuario_log` ";
-
 $querybuscausuario = mysql_query($sqlbuscausuario) or die ("sql filtro grupo erro");
 $totalusuariolog = mysql_num_rows($querybuscausuario);
 
-$sqlbuscalog = "SELECT COUNT(*) as qtdlog FROM `SystemEvents` ";
-
-$querybuscalog = mysql_query($sqlbuscalog) or die ("sql filtro grupo erro");
-
-$totallog = mysql_fetch_assoc($querybuscalog)
-
- 
-
+//$sqlbuscalog = "SELECT COUNT(*) as qtdlog FROM `SystemEvents` ";
+//$querybuscalog = mysql_query($sqlbuscalog) or die ("sql filtro grupo erro");
+//$totallog = mysql_fetch_assoc($querybuscalog);
 ?>
-
-
 <div class="container">
 	<div class="row clearfix">
 		<div class="col-md-12 column">
@@ -41,9 +28,6 @@ $totallog = mysql_fetch_assoc($querybuscalog)
 			<table class="table">
 				<thead>
 					<tr>
-						<th>
-							Total de log
-						</th>
 						<th>
 							Total de usuarios
 						</th>
@@ -60,9 +44,6 @@ $totallog = mysql_fetch_assoc($querybuscalog)
 				</thead>
 				<tbody>
 					<tr>
-						<td>
-							<?php echo $totallog[qtdlog];?>
-						</td>
 						<td>
 							<?php echo $totalusuariolog ; ?>
 						</td>
