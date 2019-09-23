@@ -1,6 +1,7 @@
 # Gestor-Log-Mikrotik-Linux
 Ferramenta para capturar logs de conexões em uma rede provida por um mikrotik (versão Linux).
-[![Video demonstrativo](https://www.youtube.com/watch?v=wG0e7yudzT0)](https://www.youtube.com/watch?v=wG0e7yudzT0)
+
+[![Video demonstrativo]](https://www.youtube.com/watch?v=wG0e7yudzT0)
 
 #### Instação em Debian 8
 ```
