@@ -1,7 +1,7 @@
 # Gestor-Log-Mikrotik-Linux
 Ferramenta para capturar logs de conexões em uma rede provida por um mikrotik (versão Linux).
 
-[![Video demonstrativo]](https://www.youtube.com/watch?v=wG0e7yudzT0)
+[Video demonstrativo](https://www.youtube.com/watch?v=wG0e7yudzT0)
 
 #### Instação em Debian 8
 ```
@@ -31,13 +31,14 @@ Definir o diretorio raiz para o apache2 caso necessario normalmente em /etc/apac
 ```
 nano /etc/apache2/sites-available/000-default.conf
 ```
-//exemplo abaixo de como deve ficar 
+Exemplo abaixo de como deve ficar 
+```
 <VirtualHost *:80>
         ServerAdmin webmaster@localhost
         DocumentRoot /var/www/html/Gestor-Log-Mikrotik-Linux
 </VirtualHost>
-
-//reiniciar o apache
+```
+Reiniciar o apache
 ```
 service apache2 restart
 ```
@@ -50,7 +51,7 @@ mysql -p Syslog < usuarios.sql
 mysql -p Syslog < usuario_log.sql
 ```
 Editar o arquivo definindo o login e senha do banco de dados
-exemplo root@debian:/var/www/html/Gestor-Log-Mikrotik-Linux# nano site/Connections/site.php
+Exemplo root@debian:/var/www/html/Gestor-Log-Mikrotik-Linux# nano site/Connections/site.php
 ```
 nano /var/www/html/Gestor-Log-Mikrotik-Linux/site/Connections/site.php
 ```
