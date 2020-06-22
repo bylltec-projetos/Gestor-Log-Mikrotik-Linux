@@ -31,7 +31,7 @@ function tamanho_arquivo($arquivo) {
 ?>
 <table class="table">
 <tr>
-<th colspan="4">ManutenÃ§Ã£o dos Backups</th>
+<th colspan="4">Backups</th>
 </tr>
 <tr>
 <td>
@@ -54,6 +54,7 @@ function tamanho_arquivo($arquivo) {
 		<td><?php echo $img; ?></td>
 		<td><?php echo tamanho_arquivo($img); ?></td>
 <td><a href="/site/gestorserver/log/backuplog/action_download_arquivo.php?arquivo=<?php echo $img; ?>" class="btn btn-primary btn-sm">Baixar</a></td>
+<td><a href="/site/gestorserver/log/backuplog/action_restaura_backup.php?arquivo=<?php echo $img; ?>" class="btn btn-primary btn-sm">Restaurar</a></td>
 <td><a href="/site/gestorserver/log/backuplog/action_exclui_arquivo.php?arquivo=<?php echo $img; ?>" class="btn btn-danger btn-sm">Excluir</a></td>
 </tr>
 <?php
