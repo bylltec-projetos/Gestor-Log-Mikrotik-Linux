@@ -11,7 +11,11 @@ if (!isset($_SESSION['UsuarioID']) OR ($_SESSION['UsuarioNivel'] > $nivel_necess
 }
 ?>
 <?php
-$arquivoNome = "/var/backups/gestorlog/".$_REQUEST["arquivo"];
+$tipo = $_REQUEST["tipo"];
+if($tipo == "hora")
+	$arquivoNome = "/var/backups/gestorlog/diario/".$_REQUEST["arquivo"];
+else
+	$arquivoNome = "/var/backups/gestorlog/".$_REQUEST["arquivo"];
 
 $extensao = substr($arquivoNome, -6); 
 if($extensao == "tar.gz" or $extensao == "TAR.GZ"){
