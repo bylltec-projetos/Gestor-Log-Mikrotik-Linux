@@ -1,70 +1,67 @@
 <?php
-// A sess�o precisa ser iniciada em cada p�gina diferente
+// A sessão precisa ser iniciada em cada página diferente
 if (!isset($_SESSION)) session_start();
 $nivel_necessario = 5;
-// Verifica se n�o h� a vari�vel da sess�o que identifica o usu�rio
-if (!isset($_SESSION['UsuarioID']) OR ($_SESSION['UsuarioNivel'] > $nivel_necessario)) {
-	// Destr�i a sess�o por seguran�a
-	session_destroy();
-	// Redireciona o visitante de volta pro login
-	header("Location: /site/login/index.php"); exit;
+// Verifica se não há a variável da sessão que identifica o usuário
+if (!isset($_SESSION['UsuarioID']) || ($_SESSION['UsuarioNivel'] > $nivel_necessario)) {
+    // Destrói a sessão por segurança
+    session_destroy();
+    // Redireciona o visitante de volta para o login
+    header("Location: /site/login/index.php");
+    exit;
 }
 ?>
 
 <?php
-
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 require_once('../../Connections/site.php');
 $iduser = $_SESSION['iduser'];
-$data1 = mysql_real_escape_string($_REQUEST['data1']);
-$data2 = mysql_real_escape_string($_REQUEST['data2']);
-$tipo = mysql_real_escape_string($_REQUEST['tipo']);
-$conta = mysql_real_escape_string($_REQUEST['conta']);
+$data1 = $_REQUEST['data1'];
+$data2 = $_REQUEST['data2'];
+$tipo = $_REQUEST['tipo'];
+$conta = $_REQUEST['conta'];
 $data1br = date('d/m/Y', strtotime($data1));
 $data2br = date('d/m/Y', strtotime($data2));
-//echo '<tr><td>Conta: '.$conta.'</td>  <td>'$tipo'</td>  <td>'$data1''$data2'</td> </tr>';
-//echo $iduser;
-//seleciona banco de dados
-mysql_select_db($database_site, $site);
 
-$totalfiltro = "SELECT distinct dominio FROM log WHERE `iduser` = $iduser ;"; 
-                     $resultotalfiltro = mysql_query($totalfiltro) or die(mysql_error());
-                                  
-    while ($row_rslistafiltrografico2 = mysql_fetch_assoc($resultotalfiltro)){
-                     
-                $nomefiltrocategoria = $row_rslistafiltrografico2['dominio'];     
-                     
-                   $queryfiltro = "SELECT * FROM log WHERE `linhalog` LIKE '%$nomefiltrocategoria%' AND `iduser` = '$iduser'  ";  
- $resultfiltro = mysql_query($queryfiltro) or die(mysql_error());
-$row = mysql_fetch_array($resultfiltro);
+try {
+    $totalfiltro = "SELECT DISTINCT dominio FROM log WHERE `iduser` = :iduser";
+    $stmt_totalfiltro = $pdo->prepare($totalfiltro);
+    $stmt_totalfiltro->bindValue(':iduser', $iduser);
+    $stmt_totalfiltro->execute();
+    $resultotalfiltro = $stmt_totalfiltro->fetchAll(PDO::FETCH_ASSOC);
 
+    $tudo2 = '';
+    $categoriainteira = '';
+    $totaldominiolistado = '';
 
-$resultadototalfiltro = mysql_num_rows($resultfiltro);
+    foreach ($resultotalfiltro as $row_rslistafiltrografico2) {
+        $nomefiltrocategoria = $row_rslistafiltrografico2['dominio'];
 
+        $queryfiltro = "SELECT * FROM log WHERE `linhalog` LIKE :nomefiltrocategoria AND `iduser` = :iduser";
+        $stmt_filtro = $pdo->prepare($queryfiltro);
+        $stmt_filtro->bindValue(':nomefiltrocategoria', "%$nomefiltrocategoria%");
+        $stmt_filtro->bindValue(':iduser', $iduser);
+        $stmt_filtro->execute();
+        $resultfiltro = $stmt_filtro->fetchAll(PDO::FETCH_ASSOC);
 
-if ($resultadototalfiltro <= 0){
-    
- $resultadototalfiltro = 0;   
+        $resultadototalfiltro = count($resultfiltro);
+
+        if ($resultadototalfiltro <= 0) {
+            $resultadototalfiltro = 0;
+        } else {
+            $tudo = "['$nomefiltrocategoria', $resultadototalfiltro],";
+            $tudo2 .= $tudo;
+            $categoria = "'$nomefiltrocategoria',";
+            $categoriainteira .= $categoria;
+            $totaldominio = "'$resultadototalfiltro',";
+            $totaldominiolistado .= $totaldominio;
+        }
+    }
+} catch (PDOException $e) {
+    echo "Failed to connect to MySQL: " . $e->getMessage();
+    exit();
 }
- else {
-    
+?>
 
-$tudo =  "['$nomefiltrocategoria',       $resultadototalfiltro],";
-  //echo "['$nomefiltrocategoria',       $resultadototalfiltro],";  
-   $tudo2 = $tudo2.$tudo;
-   $categoria =  "'$nomefiltrocategoria',";
-   $categoriainteira = $categoriainteira.$categoria;
-   $totaldominio =  "'$resultadototalfiltro',";
-   $totaldominiolistado = $totaldominiolistado.$totaldominio;
-   }
-                 } 
-                 //echo $tudo2;
-                 
-                 //echo $totaldominiolistado;
- ?>
 <!DOCTYPE HTML>
 <html>
 	<head>
@@ -132,7 +129,7 @@ $(function () {
             }]
         });
     });
-    
+
 
 		</script>
 	</head>
