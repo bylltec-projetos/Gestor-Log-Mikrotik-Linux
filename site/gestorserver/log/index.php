@@ -1,5 +1,5 @@
 <?php
- 
+
 if (!isset($_SESSION)) session_start();
 $nivel_necessario = 5;
 // Verifica se n?o h? a vari?vel da sess?o que identifica o usu?rio
@@ -23,7 +23,7 @@ if (!isset($_SESSION['UsuarioID']) OR ($_SESSION['UsuarioNivel'] > $nivel_necess
 	<!--link rel="stylesheet/less" href="less/responsive.less" type="text/css" /-->
 	<!--script src="js/less-1.3.3.min.js"></script-->
 	<!--append �#!watch� to the browser URL, then refresh the page. -->
-	
+
 	<link href="css/bootstrap.min.css" rel="stylesheet">
 	<link href="css/style.css" rel="stylesheet">
 
@@ -38,7 +38,7 @@ if (!isset($_SESSION['UsuarioID']) OR ($_SESSION['UsuarioNivel'] > $nivel_necess
   <link rel="apple-touch-icon-precomposed" sizes="72x72" href="img/apple-touch-icon-72-precomposed.png">
   <link rel="apple-touch-icon-precomposed" href="img/apple-touch-icon-57-precomposed.png">
   <link rel="shortcut icon" href="img/favicon.png">
-  
+
 	<script type="text/javascript" src="js/jquery.min.js"></script>
 	<script type="text/javascript" src="js/bootstrap.min.js"></script>
 	<script type="text/javascript" src="js/scripts.js"></script>
@@ -52,10 +52,10 @@ if (!isset($_SESSION['UsuarioID']) OR ($_SESSION['UsuarioNivel'] > $nivel_necess
 				<div class="navbar-header">
 					 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1"> <span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button> <a class="navbar-brand" href="?pagina=status">Status do Log</a>
 				</div>
-				
+
 				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 					<ul class="nav navbar-nav">
-						
+
                                                 <li>
 							<a href="/site/gestorserver/log/?pagina=relatorio">Relatorio</a>
 						</li>
@@ -93,25 +93,25 @@ if (!isset($_SESSION['UsuarioID']) OR ($_SESSION['UsuarioNivel'] > $nivel_necess
 							</ul>
 						</li>
 					</ul>
-					
+
 					<ul class="nav navbar-nav navbar-right">
 						<li>
-							<a href="https://www.bylltec.com.br/site/home.php?pagina=suporte&sistema=gestorlog">Suporte - Versao 0.0.5</a>
+							<a href="https://www.bylltec.com.br/site/home.php?pagina=suporte&sistema=gestorlog">Suporte - Versao 2.1.1</a>
 						</li>
 						<li>
 							<a href="/site/login/logout.php">Sair</a>
 						</li>
 					</ul>
 				</div>
-				
+
 			</nav>
-                   
-                     
 
 
-                     
-			
-                             
+
+
+
+
+
 		</div>
 	</div>
 	<?php
@@ -119,26 +119,26 @@ $pagina = $_REQUEST['pagina'];
 $tipografico = $_REQUEST['tipografico'];
 
 if ($pagina ==''){
- 
+
   require('./home.php');
  }
  if ($pagina =='manutencao'){
- 
+
   require('../../admin/redefinir_senha.php');
  }
  if ($pagina =='status'){
- 
+
   require('./status.php');
  }
  if ($pagina =='relatorio'){
- 
+
   require('./relatorio_log.php');
  }
  if ($pagina =='rank'){
- 
+
   require('./top_rank.php');
  }
- 
+
  if ($pagina =='estatistica'){
      if($tipografico==''){
   require('./grafico_dominio_pizza.php');
@@ -150,13 +150,13 @@ if ($pagina ==''){
      require './grafico_funil_usuario.php';
  }
  }
- 
+
  if ($pagina =='adicionar_usuario'){
- 
+
   require('./add_novo_usuario.php');
     require('./usuarios_cadastrados.php');
  }
- 
+
  ?>
 </div>
 </body>

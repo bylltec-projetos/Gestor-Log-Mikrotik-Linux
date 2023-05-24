@@ -1,102 +1,90 @@
 <?php
-// A sess�o precisa ser iniciada em cada p�gina diferente
+// A sessão precisa ser iniciada em cada página diferente
 if (!isset($_SESSION)) session_start();
 $nivel_necessario = 5;
-// Verifica se n�o h� a vari�vel da sess�o que identifica o usu�rio
-if (!isset($_SESSION['UsuarioID']) OR ($_SESSION['UsuarioNivel'] > $nivel_necessario)) {
-	// Destr�i a sess�o por seguran�a
-	session_destroy();
-	// Redireciona o visitante de volta pro login
-	header("Location: /site/login/index.php"); exit;
+// Verifica se não há a variável da sessão que identifica o usuário
+if (!isset($_SESSION['UsuarioID']) || ($_SESSION['UsuarioNivel'] > $nivel_necessario)) {
+    // Destrói a sessão por segurança
+    session_destroy();
+    // Redireciona o visitante de volta para o login
+    header("Location: /site/login/index.php");
+    exit;
 }
 ?>
+
 <?php
 require '../../Connections/site.php';
-mysql_select_db($database_site, $site);
-$sqlbuscausuario = "SELECT * FROM `usuario_log` ";
-$querybuscausuario = mysql_query($sqlbuscausuario) or die ("sql filtro grupo erro");
-$totalusuariolog = mysql_num_rows($querybuscausuario);
 
-//$sqlbuscalog = "SELECT COUNT(*) as qtdlog FROM `SystemEvents` ";
-//$querybuscalog = mysql_query($sqlbuscalog) or die ("sql filtro grupo erro");
-//$totallog = mysql_fetch_assoc($querybuscalog);
+try {
+  
+    $sqlbuscausuario = "SELECT * FROM `usuario_log`";
+    $querybuscausuario = $pdo->query($sqlbuscausuario);
+    $totalusuariolog = $querybuscausuario->rowCount();
+
+    $espaco_disco = disk_free_space(".");
+    $si_prefix = array('B', 'KB', 'MB', 'GB', 'TB', 'EB', 'ZB', 'YB');
+    $base = 1024;
+    $class = min((int)log($espaco_disco, $base), count($si_prefix) - 1);
+    $espaco_disco_formatado = sprintf('%1.2f', $espaco_disco / pow($base, $class)) . ' ' . $si_prefix[$class];
+
+    $disco_total = disk_total_space("/");
+    $class = min((int)log($disco_total, $base), count($si_prefix) - 1);
+    $disco_total_formatado = sprintf('%1.2f', $disco_total / pow($base, $class)) . ' ' . $si_prefix[$class];
+} catch (PDOException $e) {
+    echo "Failed to connect to MySQL: " . $e->getMessage();
+    exit();
+}
 ?>
+
 <div class="container">
-	<div class="row clearfix">
-		<div class="col-md-12 column">
-			 <span class="label label-default">Status do log</span>
-			<table class="table">
-				<thead>
-					<tr>
-						<th>
-							Total de usuarios
-						</th>
-						<th>
-							status
-						</th>
-						<th>
-							Espaço Livre
-						</th>
-						<th>
-							Espaço Total
-						</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr>
-						<td>
-							<?php echo $totalusuariolog ; ?>
-						</td>
-						<td>
-							Ativo
-						</td>
-						<td>
-						<?php 
+    <div class="row clearfix">
+        <div class="col-md-12 column">
+            <span class="label label-default">Status do log</span>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>
+                            Total de usuários
+                        </th>
+                        <th>
+                            Status
+                        </th>
+                        <th>
+                            Espaço Livre
+                        </th>
+                        <th>
+                            Espaço Total
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <?php echo $totalusuariolog; ?>
+                        </td>
+                        <td>
+                            Ativo
+                        </td>
+                        <td>
+                            <?php echo $espaco_disco_formatado; ?>
+                        </td>
+                        <td>
+                            <?php echo $disco_total_formatado; ?>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
 
-						$espaco_disco = disk_free_space("."); 
-					    $si_prefix = array( 'B', 'KB', 'MB', 'GB', 'TB', 'EB', 'ZB', 'YB' );
-					    $base = 1024;
-					    $class = min((int)log($espaco_disco , $base) , count($si_prefix) - 1);
-					    //echo $bytes . '<br />';
-					    echo sprintf('%1.2f' , $espaco_disco / pow($base,$class)) . ' ' . $si_prefix[$class] . '<br />';
-						?>	
-						</td>
-						<td>
-							<?php 
-							$disco_total = disk_total_space("/");
-							$si_prefix = array( 'B', 'KB', 'MB', 'GB', 'TB', 'EB', 'ZB', 'YB' );
-					    	$base = 1024;
-					    	$class = min((int)log($disco_total , $base) , count($si_prefix) - 1);
-					    	//echo $bytes . '<br />';
-					    	echo sprintf('%1.2f' , $disco_total / pow($base,$class)) . ' ' . $si_prefix[$class] . '<br />';
-							/*
-							function getSymbolByQuantity($bytes) {
-								    $symbols = array('B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB');
-								    $exp = floor(log($bytes)/log(1024));
-
-								    return sprintf('%.2f '.$symbol[$exp], ($bytes/pow(1024, floor($exp))));
-								}
-							echo getSymbolByQuantity($disco_total);	
-							*/
-							?>
-						</td>
-					</tr>
-					
-					
-					
-					
-				</tbody>
-			</table>
-			<?php 
-			require("backuplog/listar_arquivos.php");
-			?>
-			
-		</div>
+            <?php
+            require("backuplog/listar_arquivos.php");
+            ?>
         </div>
+    </div>
 </div>
 
 
-   
+
+
 
 </body>
 </html>
@@ -114,11 +102,11 @@ $totalusuariolog = mysql_num_rows($querybuscausuario);
 <div id="pop">
 <a href="#" onClick="document.getElementById('pop').style.display='none';"></a>
 <br />
-	
 
-		<p class="align-center"><img src="/site/images/progresso.gif" width="20" height="20" alt="progress"/>Aguarde... </p> 
-	<p>Processando Backup</p> 	
-      
+
+		<p class="align-center"><img src="/site/images/progresso.gif" width="20" height="20" alt="progress"/>Aguarde... </p>
+	<p>Processando Backup</p>
+
 </div>
 
 

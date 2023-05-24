@@ -1,162 +1,110 @@
 <?php
-// A sess�o precisa ser iniciada em cada p�gina diferente
+// A sessão precisa ser iniciada em cada página diferente
 if (!isset($_SESSION))
     session_start();
 $nivel_necessario = 5;
-// Verifica se n�o h� a vari�vel da sess�o que identifica o usu�rio
-if (!isset($_SESSION['UsuarioID']) OR ( $_SESSION['UsuarioNivel'] > $nivel_necessario)) {
-    // Destr�i a sess�o por seguran�a
+// Verifica se não há a variável da sessão que identifica o usuário
+if (!isset($_SESSION['UsuarioID']) || ($_SESSION['UsuarioNivel'] > $nivel_necessario)) {
+    // Destrói a sessão por segurança
     session_destroy();
-    // Redireciona o visitante de volta pro login
+    // Redireciona o visitante de volta para o login
     header("Location: /site/login/index.php");
     exit;
 }
 ?>
 <?php set_time_limit(0); ?>
 <?php
-//$date = date('Y-m-d H:i');
-//echo $date;
 require_once('../../Connections/site.php');
 $iduser = $_SESSION['iduser'];
-$data1 = mysql_real_escape_string($_REQUEST['data1']);
-$data2 = mysql_real_escape_string($_REQUEST['data2']);
-$tipo = mysql_real_escape_string($_REQUEST['tipo']);
-$conta = mysql_real_escape_string($_REQUEST['conta']);
-$ip = mysql_real_escape_string($_REQUEST['ipusuariolog']);
-//$data1br = date('d/m/Y', strtotime($data1));
-//$data2br = date('d/m/Y', strtotime($data2));
-//if ( $data1 == "") {
-//   $data1 = date('Y-m-d', strtotime("-7 days")); 
-//   
-//  
-//}
-//if ( $data2 == "") {
-//    
-//   $data2 = date('Y-m-d'); 
-//  
-//}
-//echo '<tr><td>Conta: '.$conta.'</td>  <td>'$tipo'</td>  <td>'$data1''$data2'</td> </tr>';
-//echo $iduser;
-//seleciona banco de dados
-mysql_select_db($database_site, $site);
+$data1 = $_REQUEST['data1'];
+$data2 = $_REQUEST['data2'];
+$tipo = $_REQUEST['tipo'];
+$conta = $_REQUEST['conta'];
+$ip = $_REQUEST['ipusuariolog'];
 
-$sqlselecionausuariolog = "SELECT * FROM `usuario_log` ";
-$queryselecionausuariolog = mysql_query($sqlselecionausuariolog) or die("sql select erro");
+try {
+    $pdo = new PDO("mysql:host=$hostname_site;dbname=$database_site", $username_site, $password_site);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-if ($ip != "") {
+    //seleciona banco de dados
+    $sqlselectdb = "USE `$database_site`";
+    $pdo->exec($sqlselectdb);
 
-    $sqlselecionausuariolog2 = "SELECT * FROM `usuario_log` where `ipusuariolog`= '$ip' ";
-    $queryselecionausuariolog2 = mysql_query($sqlselecionausuariolog2) or die("sql select erro2");
-    $row_rsselecionausuariolog2 = mysql_fetch_assoc($queryselecionausuariolog2);
-    $usuariolog = $row_rsselecionausuariolog2['usuariolog'];
-}
+    $sqlselecionausuariolog = "SELECT * FROM `usuario_log` ";
+    $stmt_selecionausuariolog = $pdo->query($sqlselecionausuariolog);
+    $row_rsselecionausuariolog = $stmt_selecionausuariolog->fetchAll(PDO::FETCH_ASSOC);
 
-//linha original 
-//$queryfiltro = "SELECT Message, Count(Message) AS ContMessage FROM SystemEvents WHERE `SysLogTag`='web-proxy,account' and `ReceivedAt`>='$data1 00:00:00' and `ReceivedAt`<='$data2 23:59:59' GROUP BY  Message ORDER BY `ContMessage` DESC LIMIT 0,30;";
-$queryfiltro = "SELECT Message FROM SystemEvents WHERE `Message` LIKE '%$ip%' and `SysLogTag` like 'web-proxy,account' and `ReceivedAt`>='$data1 00:00:00' and `ReceivedAt`<='$data2 23:59:59' GROUP BY  Message ORDER BY `Message`";
-
-//echo $queryfiltro;
-$resultfiltro = mysql_query($queryfiltro) or die(mysql_error());
-while ($row_rslistafiltrografico2 = mysql_fetch_assoc($resultfiltro)) {
-      $dominio = $row_rslistafiltrografico2['Message'];
-    //echo "<br>";   
-    $posicao = strpos($dominio, 'http://');
-    if ($posicao != "" || $posicao > 0) {
-        $texto = substr($dominio, $posicao + 7); 
-        $string = explode("/", $texto);
-        $nomefiltrocategoria = $string[0];
-        $acessos[] = $nomefiltrocategoria; 
-
-        
-    }
-}
-$acessos_cont = array_count_values($acessos);
-arsort($acessos_cont);
-//print_r($acessos_cont);
-
-//foreach ($acessos_cont as $chave => $conteudo) {
-foreach (array_slice($acessos_cont, 0, 30) as $chave => $conteudo) {    
-   $tudo = "['$chave',$conteudo],";
-   //echo "<br/>";  
-    $tudo2 = $tudo2 . $tudo;
-        
-  }
-
-//echo $tudo2;
-//$array = array_unique($array);
-
-//print_r($conta_valores);
-//echo "<br>";
-//print_r($acessos);
-//inicio da busca por ocorrencia contendo o dominio da primeira busca
-/*
-foreach ($array as $dominiobusca) {
-//echo $dominiobusca;
-//echo "<br>";
-    $queryfiltro2 = "SELECT COUNT(*) Total FROM SystemEvents WHERE `Message` LIKE '%$dominiobusca%' and `Message` LIKE '%$ip%'and `ReceivedAt`>='$data1 00:00:00' and `ReceivedAt`<='$data2 23:59:59' ";
-    $resultfiltro2 = mysql_query($queryfiltro2) or die(mysql_error());
-    $row = mysql_fetch_assoc($resultfiltro2);
-    //echo "<br>";
-     $resultadototalfiltro = $row['Total'];
-     //$acessos = ["$dominiobusca" => "$resultadototalfiltro"];
-
-//echo "<br>";
-//    echo $queryfiltro2;
-//    echo "<br>";
-//    echo $dominiobusca;
-     
-    if ($resultadototalfiltro <= 0) {
-
-        $resultadototalfiltro = 0;
-    } else {
-
-
-        $tudo = "['$dominiobusca',       $resultadototalfiltro],";
-        //echo "['$nomefiltrocategoria',       $resultadototalfiltro],";  
-        $tudo2 = $tudo2 . $tudo;
+    if ($ip != "") {
+        $sqlselecionausuariolog2 = "SELECT * FROM `usuario_log` where `ipusuariolog`= :ip";
+        $stmt_selecionausuariolog2 = $pdo->prepare($sqlselecionausuariolog2);
+        $stmt_selecionausuariolog2->bindValue(':ip', $ip);
+        $stmt_selecionausuariolog2->execute();
+        $row_rsselecionausuariolog2 = $stmt_selecionausuariolog2->fetch(PDO::FETCH_ASSOC);
+        $usuariolog = $row_rsselecionausuariolog2['usuariolog'];
     }
 
+    $queryfiltro = "SELECT Message FROM SystemEvents WHERE `Message` LIKE :ip AND `SysLogTag` LIKE 'web-proxy,account' AND `ReceivedAt` >= :data1 AND `ReceivedAt` <= :data2 GROUP BY Message ORDER BY `Message`";
+    $stmt_filtro = $pdo->prepare($queryfiltro);
+    $stmt_filtro->bindValue(':ip', "%$ip%");
+    $stmt_filtro->bindValue(':data1', "$data1 00:00:00");
+    $stmt_filtro->bindValue(':data2', "$data2 23:59:59");
+    $stmt_filtro->execute();
+    $resultfiltro = $stmt_filtro->fetchAll(PDO::FETCH_ASSOC);
+
+    $tudo2 = '';
+    $acessos = array();
+
+    foreach ($resultfiltro as $row_rslistafiltrografico2) {
+        $dominio = $row_rslistafiltrografico2['Message'];
+        $posicao = strpos($dominio, 'http://');
+        if ($posicao !== false && $posicao > 0) {
+            $texto = substr($dominio, $posicao + 7);
+            $string = explode("/", $texto);
+            $nomefiltrocategoria = $string[0];
+            $acessos[] = $nomefiltrocategoria;
+        }
+    }
+
+    $acessos_cont = array_count_values($acessos);
+    arsort($acessos_cont);
+
+    foreach (array_slice($acessos_cont, 0, 30) as $chave => $conteudo) {
+        $tudo = "['$chave',$conteudo],";
+        $tudo2 .= $tudo;
+    }
+} catch (PDOException $e) {
+    echo "Failed to connect to MySQL: " . $e->getMessage();
+    exit();
 }
-*/
-//print_r($acessos);
-//echo $tudo2;
 ?>
+
 <form action="?pagina=estatistica" method="POST">
-
     <table border="0" align="center">
-
         <tbody>
             <tr>
                 <td>Usuario:</td>
-                <td><select name="ipusuariolog" id="usuariolog">
-
+                <td>
+                    <select name="ipusuariolog" id="usuariolog">
+                        <option value="">Todos</option>
                         <?php
-                        echo '<option value="">Todos</option>';
-                        while ($row_rsselecionausuariolog = mysql_fetch_assoc($queryselecionausuariolog)) {
-
-                            echo '<option value="' . $row_rsselecionausuariolog['ipusuariolog'] . '">' . $row_rsselecionausuariolog['usuariolog'] . '</option>';
+                        foreach ($row_rsselecionausuariolog as $row) {
+                            echo '<option value="' . $row['ipusuariolog'] . '">' . $row['usuariolog'] . '</option>';
                         }
                         ?>
-
-
-
-                    </select></td>
+                    </select>
+                </td>
                 <td>Tipo:</td>
-                <td><select name="tipografico" id="tipografico">
-
-                        <?php
-                        echo '<option value="pizza">Pizza</option>';
-                        echo '<option value="funil" selected>Funil</option>';
-                        ?>
-
-
-
-                    </select></td>
+                <td>
+                    <select name="tipografico" id="tipografico">
+                        <option value="pizza">Pizza</option>
+                        <option value="funil" selected>Funil</option>
+                    </select>
+                </td>
                 <td>De:</td>
                 <td><input type="date" name="data1" value="<?php echo $data1; ?>"></td>
                 <td>Até:</td>
                 <td><input type="date" name="data2" value="<?php echo $data2; ?>"></td>
-                <td><input type="submit" value="ok" onClick="document.getElementById('pop').style.display = 'block';" /></td>
+                <td><input type="submit" value="ok" onClick="document.getElementById('pop').style.display = 'block';"></td>
             </tr>
         </tbody>
     </table>
@@ -197,7 +145,7 @@ Highcharts.chart('container', {
     series: [{
         name: 'Visitas',
         data: [
-            <?php 
+            <?php
                 echo $tudo2;
             ?>
         ]
@@ -224,8 +172,8 @@ Highcharts.chart('container', {
             <br />
 
 
-            <p class="align-center"><img src="/site/images/progresso.gif" width="20" height="20" alt="progress"/>Aguarde... </p> 
-            <p>Processando</p> 	
+            <p class="align-center"><img src="/site/images/progresso.gif" width="20" height="20" alt="progress"/>Aguarde... </p>
+            <p>Processando</p>
 
 
 

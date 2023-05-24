@@ -1,55 +1,54 @@
 <?php
-// A sess�o precisa ser iniciada em cada p�gina diferente
+// A sessão precisa ser iniciada em cada página diferente
 if (!isset($_SESSION)) session_start();
 $nivel_necessario = 5;
-// Verifica se n�o h� a vari�vel da sess�o que identifica o usu�rio
-if (!isset($_SESSION['UsuarioID']) OR ($_SESSION['UsuarioNivel'] > $nivel_necessario)) {
-	// Destr�i a sess�o por seguran�a
-	session_destroy();
-	// Redireciona o visitante de volta pro login
-	header("Location: /site/login/index.php"); exit;
+// Verifica se não há a variável da sessão que identifica o usuário
+if (!isset($_SESSION['UsuarioID']) || ($_SESSION['UsuarioNivel'] > $nivel_necessario)) {
+    // Destrói a sessão por segurança
+    session_destroy();
+    // Redireciona o visitante de volta para o login
+    header("Location: /site/login/index.php");
+    exit;
 }
 ?>
+
 <?php
 require '../../Connections/site.php';
-mysql_select_db($database_site, $site);
 
-$nomeusuario= mysql_real_escape_string($_REQUEST["nomeusuario"]);
-$ipusuario= mysql_real_escape_string($_REQUEST["ipusuario"]);
-$obs= mysql_real_escape_string($_REQUEST["obs"]);
-
- 
-$sqlbuscausuario = "SELECT * FROM `usuario_log` WHERE `usuariolog` LIKE '$nomeusuario' ";
-
-$querybuscausuario = mysql_query($sqlbuscausuario) or die ("sql filtro grupo erro");
-$row_rslistagrupo = mysql_fetch_assoc($querybuscausuario);
-$totalusuariolog = mysql_num_rows($querybuscausuario);
-
-if($nomeusuario==""){
-echo "<script type='text/javascript'> alert('Preencha o nome.');</script>";
-echo '<head><meta http-equiv=refresh content="0; URL=/site/gestorserver/log/?pagina=adicionar_usuario"></head>';    
-}
-elseif($ipusuario==""){
-echo "<script type='text/javascript'> alert('Preencha o ip.');</script>";
- echo '<head><meta http-equiv=refresh content="0; URL=/site/gestorserver/log/?pagina=adicionar_usuario"></head>';    
-}
-elseif (mysql_num_rows($querybuscausuario) > 0) {
-    
+try {
   
-     echo '<head><meta http-equiv=refresh content="0; URL=/site/gestorserver/log/?pagina=adicionar_usuario"></head>'; 
-    echo "<script type='text/javascript'> alert('Este usuario ja existe.');</script>";   
- }
- 
- else{
-    
-$sqladicionafiltrogrupo = "INSERT INTO `$database_site`.`usuario_log` (`idusuariolog`,`usuariolog`,`ipusuariolog`,`obs`) VALUES (NULL, '$nomeusuario', '$ipusuario', '$obs')";
-//echo $$sql3;
-mysql_query($sqladicionafiltrogrupo) or die ("nao foi possivel inserir o grupo");
+    $nomeusuario = $_REQUEST["nomeusuario"];
+    $ipusuario = $_REQUEST["ipusuario"];
+    $obs = $_REQUEST["obs"];
 
-echo "<script type='text/javascript'> alert('O $nomeusuario adicionado com sucesso.');</script>"; 
-echo '<head><meta http-equiv=refresh content="0; URL=/site/gestorserver/log/?pagina=adicionar_usuario"></head>';   
+    $sqlbuscausuario = "SELECT * FROM `usuario_log` WHERE `usuariolog` LIKE :nomeusuario";
+    $stmt = $pdo->prepare($sqlbuscausuario);
+    $stmt->bindValue(':nomeusuario', $nomeusuario);
+    $stmt->execute();
+    $totalusuariolog = $stmt->rowCount();
+
+    if (empty($nomeusuario)) {
+        echo "<script type='text/javascript'> alert('Preencha o nome.');</script>";
+        echo '<head><meta http-equiv=refresh content="0; URL=/site/gestorserver/log/?pagina=adicionar_usuario"></head>';
+    } elseif (empty($ipusuario)) {
+        echo "<script type='text/javascript'> alert('Preencha o IP.');</script>";
+        echo '<head><meta http-equiv=refresh content="0; URL=/site/gestorserver/log/?pagina=adicionar_usuario"></head>';
+    } elseif ($totalusuariolog > 0) {
+        echo '<head><meta http-equiv=refresh content="0; URL=/site/gestorserver/log/?pagina=adicionar_usuario"></head>';
+        echo "<script type='text/javascript'> alert('Este usuário já existe.');</script>";
+    } else {
+        $sqladicionafiltrogrupo = "INSERT INTO `$database_site`.`usuario_log` (`idusuariolog`,`usuariolog`,`ipusuariolog`,`obs`) VALUES (NULL, :nomeusuario, :ipusuario, :obs)";
+        $stmt = $pdo->prepare($sqladicionafiltrogrupo);
+        $stmt->bindValue(':nomeusuario', $nomeusuario);
+        $stmt->bindValue(':ipusuario', $ipusuario);
+        $stmt->bindValue(':obs', $obs);
+        $stmt->execute();
+
+        echo "<script type='text/javascript'> alert('O usuário $nomeusuario foi adicionado com sucesso.');</script>";
+        echo '<head><meta http-equiv=refresh content="0; URL=/site/gestorserver/log/?pagina=adicionar_usuario"></head>';
+    }
+} catch (PDOException $e) {
+    echo "Failed to connect to MySQL: " . $e->getMessage();
+    exit();
 }
-
- 
-
 ?>
