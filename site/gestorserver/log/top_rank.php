@@ -100,7 +100,7 @@ $queryselecionausuariolog = $pdo->query($sqlselecionausuariolog);
                         $posicao = strpos($dominio, 'CONNECT');
                         if ($posicao !== false && $posicao >= 0) {
                             $texto = substr($dominio, $posicao + 8);
-                            $string = explode("/", $texto);
+                            $string = explode(" ", $texto);
                             $dominio = $string[0];
                             ?>
                             <tr>
