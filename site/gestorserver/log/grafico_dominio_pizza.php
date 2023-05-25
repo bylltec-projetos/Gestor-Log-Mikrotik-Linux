@@ -60,6 +60,13 @@ try {
             $nomefiltrocategoria = $string[0];
             $array[] = $nomefiltrocategoria;
         }
+        $posicao = strpos($nomefiltrocategoria, 'CONNECT');
+        if ($posicao !== false && $posicao > 0) {
+            $texto = substr($nomefiltrocategoria, $posicao + 8);
+            $string = explode("/", $texto);
+            $nomefiltrocategoria = $string[0];
+            $array[] = $nomefiltrocategoria;
+        }
     }
 
     $array = array_unique($array);
