@@ -1,12 +1,10 @@
 <?php
-// A sessão precisa ser iniciada em cada página diferente
-if (!isset($_SESSION)) session_start();
+if (!isset($_SESSION)) {
+    session_start();
+}
 $nivel_necessario = 5;
-// Verifica se não há a variável da sessão que identifica o usuário
 if (!isset($_SESSION['UsuarioID']) || ($_SESSION['UsuarioNivel'] > $nivel_necessario)) {
-    // Destrói a sessão por segurança
     session_destroy();
-    // Redireciona o visitante de volta para o login
     header("Location: /site/gestorserver/log/login.html");
     exit;
 }
@@ -84,9 +82,6 @@ try {
 }
 ?>
 
-
-
-
 <!DOCTYPE html>
 <html>
     <head>
@@ -95,118 +90,92 @@ try {
 
         <script type='text/javascript' src='/site/graficos/jqgrafico.js'></script>
 
-
-
         <link rel="stylesheet" type="text/css" href="/css/result-light.css">
 
         <style type='text/css'>
 
         </style>
-    <form action="?pagina=estatistica" method="POST">
+    </head>
+    <body>
+        <form action="?pagina=estatistica" method="POST">
+            <table border="0" align="center">
+                <tbody>
+                    <tr>
+                        <td>Usuario:</td>
+                        <td>
+                            <select name="ipusuariolog" id="usuariolog">
+                                <?php
+                                echo '<option value="">Todos</option>';
+                                foreach ($row_rsselecionausuariolog as $row) {
+                                    echo '<option value="' . $row['ipusuariolog'] . '">' . $row['usuariolog'] . '</option>';
+                                }
+                                ?>
+                            </select>
+                        </td>
+                        <td>Tipo:</td>
+                        <td>
+                            <select name="tipografico" id="tipografico">
+                                <option value="pizza" selected>Pizza</option>
+                                <option value="funil">Funil</option>
+                            </select>
+                        </td>
+                        <td>De:</td>
+                        <td><input type="date" name="data1" value="<?php echo $data1; ?>"></td>
+                        <td>Até:</td>
+                        <td><input type="date" name="data2" value="<?php echo $data2; ?>"></td>
+                        <td><input type="submit" value="ok" onClick="document.getElementById('pop').style.display='block';" /></td>
+                    </tr>
+                </tbody>
+            </table>
+        </form>
 
-        <table border="0" align="center">
-
-            <tbody>
-                <tr>
-                    <td>Usuario:</td>
-                    <td><select name="ipusuariolog" id="usuariolog">
-
-                            <?php
-                            echo '<option value="">Todos</option>';
-                            while ($row_rsselecionausuariolog = mysql_fetch_assoc($queryselecionausuariolog)) {
-
-                                echo '<option value="' . $row_rsselecionausuariolog['ipusuariolog'] . '">' . $row_rsselecionausuariolog['usuariolog'] . '</option>';
-                            }
-                            ?>
-
-
-
-                        </select></td>
-                    <td>Tipo:</td>
-                    <td><select name="tipografico" id="tipografico">
-
-<?php
-echo '<option value="pizza" selected>Pizza</option>';
-echo '<option value="funil">Funil</option>';
-?>
-
-
-
-                        </select></td>
-                    <td>De:</td>
-                    <td><input type="date" name="data1" value="<?php echo $data1; ?>"></td>
-                    <td>Até:</td>
-                    <td><input type="date" name="data2" value="<?php echo $data2; ?>"></td>
-                    <td><input type="submit" value="ok" onClick="document.getElementById('pop').style.display='block';" /></td>
-                </tr>
-            </tbody>
-        </table>
-    </form>
-
-    <script type='text/javascript'>//<![CDATA[
-
-        $(function () {
-            $('#container').highcharts({
-                chart: {
-                    plotBackgroundColor: null,
-                    plotBorderWidth: null,
-                    plotShadow: false
-                },
-                title: {
-                    text: '<?php echo "Grafico de utilização por Dominio de $usuariolog IP: $ip " ?>'
-                },
-                tooltip: {
-                    pointFormat: '{series.name}: <b>{point.percentage}%</b>',
-                    percentageDecimals: 1
-                },
-                plotOptions: {
-                    pie: {
-                        allowPointSelect: true,
-                        cursor: 'pointer',
-                        dataLabels: {
-                            enabled: true,
-                            color: '#000000',
-                            connectorColor: '#000000',
-                            formatter: function () {
-                                return '<b>' + this.point.name + '</b>: ' + this.percentage.toFixed(2) + ' %';
+        <script type='text/javascript'>
+            $(function () {
+                $('#container').highcharts({
+                    chart: {
+                        plotBackgroundColor: null,
+                        plotBorderWidth: null,
+                        plotShadow: false
+                    },
+                    title: {
+                        text: '<?php echo "Grafico de utilização por Dominio de $usuariolog IP: $ip " ?>'
+                    },
+                    tooltip: {
+                        pointFormat: '{series.name}: <b>{point.percentage}%</b>',
+                        percentageDecimals: 1
+                    },
+                    plotOptions: {
+                        pie: {
+                            allowPointSelect: true,
+                            cursor: 'pointer',
+                            dataLabels: {
+                                enabled: true,
+                                color: '#000000',
+                                connectorColor: '#000000',
+                                formatter: function () {
+                                    return '<b>' + this.point.name + '</b>: ' + this.percentage.toFixed(2) + ' %';
+                                }
                             }
                         }
-                    }
-                },
-                series: [{
-                        type: 'pie',
-                        name: 'Utilizando',
-                        data: [
-<?php
-echo $tudo2;
-?>
-
-
-
-
-                        ]
-                    }]
+                    },
+                    series: [{
+                            type: 'pie',
+                            name: 'Utilizando',
+                            data: [
+                                <?php echo $tudo2; ?>
+                            ]
+                        }]
+                });
             });
-        });
+        </script>
 
+        <script src="https://code.highcharts.com/highcharts.js"></script>
+        <script src="https://code.highcharts.com/modules/exporting.js"></script>
 
-        //]]>
-
-    </script>
-
-
-</head>
-<body>
-    <script src="https://code.highcharts.com/highcharts.js"></script>
-    <script src="https://code.highcharts.com/modules/exporting.js"></script>
-
-    <div id="container" style="min-width: 400px; height: 400px; margin: 0 auto"></div>
-
-
-</body>
-
-
+        <div id="container" style="min-width: 400px; height: 400px; margin: 0 auto"></div>
+    </body>
 </html>
+
 
 
 

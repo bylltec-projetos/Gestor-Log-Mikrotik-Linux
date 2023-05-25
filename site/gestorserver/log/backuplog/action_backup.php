@@ -1,18 +1,18 @@
 <?php
-// A sess�o precisa ser iniciada em cada p�gina diferente
+// A sessão precisa ser iniciada em cada página diferente
 if (!isset($_SESSION)) session_start();
 $nivel_necessario = 5;
-// Verifica se n�o h� a vari�vel da sess�o que identifica o usu�rio
-if (!isset($_SESSION['UsuarioID']) OR ($_SESSION['UsuarioNivel'] > $nivel_necessario)) {
-        // Destr�i a sess�o por seguran�a
-        session_destroy();
-        // Redireciona o visitante de volta pro login
-        header("Location: /site/login/index.php"); exit;
+// Verifica se não há a variável da sessão que identifica o usuário
+if (!isset($_SESSION['UsuarioID']) || ($_SESSION['UsuarioNivel'] > $nivel_necessario)) {
+    // Destrói a sessão por segurança
+    session_destroy();
+    // Redireciona o visitante de volta para o login
+    header("Location: /site/login/index.php");
+    exit;
 }
 ?>
 <?php
-require_once'../../../Connections/site.php';
-mysql_select_db($database_site, $site);
+require_once '../../../Connections/site.php';
 $data_hora = date("YmdHis");
 $comando = "mysqldump -u $username_site -p$password_site Syslog > /var/backups/gestorlog/diario/$data_hora.sql";
 //echo $comando;
