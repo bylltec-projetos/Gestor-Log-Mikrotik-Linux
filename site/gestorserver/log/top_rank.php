@@ -85,6 +85,30 @@ $queryselecionausuariolog = $pdo->query($sqlselecionausuariolog);
                             </tr>
                             <?php
                         }
+                        $posicao = strpos($dominio, 'https://');
+                        if ($posicao !== false && $posicao >= 0) {
+                            $texto = substr($dominio, $posicao + 8);
+                            $string = explode("/", $texto);
+                            $dominio = $string[0];
+                            ?>
+                            <tr>
+                                <td><?php echo $dominio ?></td>
+                                <td><?php echo $row_rsbuscalog['ContMessage'] ?></td>
+                            </tr>
+                            <?php
+                        }
+                        $posicao = strpos($dominio, 'CONNECT');
+                        if ($posicao !== false && $posicao >= 0) {
+                            $texto = substr($dominio, $posicao + 8);
+                            $string = explode("/", $texto);
+                            $dominio = $string[0];
+                            ?>
+                            <tr>
+                                <td><?php echo $dominio ?></td>
+                                <td><?php echo $row_rsbuscalog['ContMessage'] ?></td>
+                            </tr>
+                            <?php
+                        }
                     }
                     ?>
                 </tbody>
