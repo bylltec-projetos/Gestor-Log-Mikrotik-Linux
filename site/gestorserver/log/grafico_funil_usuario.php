@@ -23,12 +23,6 @@ $conta = $_REQUEST['conta'];
 $ip = $_REQUEST['ipusuariolog'];
 
 try {
-    $pdo = new PDO("mysql:host=$hostname_site;dbname=$database_site", $username_site, $password_site);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-    //seleciona banco de dados
-    $sqlselectdb = "USE `$database_site`";
-    $pdo->exec($sqlselectdb);
 
     $sqlselecionausuariolog = "SELECT * FROM `usuario_log` ";
     $stmt_selecionausuariolog = $pdo->query($sqlselecionausuariolog);
@@ -62,6 +56,13 @@ try {
             $string = explode("/", $texto);
             $nomefiltrocategoria = $string[0];
             $acessos[] = $nomefiltrocategoria;
+        }
+        $posicao = strpos($nomefiltrocategoria, 'https://');
+        if ($posicao !== false && $posicao > 0) {
+            $texto = substr($nomefiltrocategoria, $posicao + 8);
+            $string = explode("/", $texto);
+            $nomefiltrocategoria = $string[0];
+            $array[] = $nomefiltrocategoria;
         }
     }
 
