@@ -5,85 +5,91 @@ Ferramenta para capturar logs de conexões em uma rede provida por um mikrotik (
 
 ### Instalação em Debian 12
 
-# atualizar lista de pacotes
+#### atualizar lista de pacotes
 apt-get update
 
-# instalar o apache
+#### instalar o apache
 apt-get install -y apache2 
 
-# instalar o php e suas extensões
+#### instalar o php e suas extensões
 apt-get install php8.2 php8.2-mbstring php8.2-mysql php8.2-xml -y
 
-# habilitar a extensão pdo_mysql do php
+#### habilitar a extensão pdo_mysql do php
 sed -i 's|;extension=pdo_mysql|extension=pdo_mysql|g' /etc/php/8.2/apache2/php.ini
 
-# instalar mariadb
+#### instalar mariadb
 apt-get install mariadb-server -y
 
-# executar o script de instalação segura do mariadb
+#### executar o script de instalação segura do mariadb
 mysql_secure_installation
 
-# logar no mariadb
+#### logar no mariadb
 mysql -u root -p
 
-# criar um usuario no mariadb para o sistema/site
+#### criar um usuario no mariadb para o sistema/site
 CREATE USER 'gestorlog'@'localhost' IDENTIFIED BY '@#gestorlog';
 
-# atribuir privilegios ao novo usuario
+#### atribuir privilegios ao novo usuario
 GRANT ALL PRIVILEGES ON * . * TO 'gestorlog'@'localhost';
 
-# executar o comando flush privileges para as mudanças entrar em vigor imediatamente
+#### executar o comando flush privileges para as mudanças entrar em vigor imediatamente
 FLUSH PRIVILEGES;
 
-# sair do mariadb
+#### sair do mariadb
 exit
 
-#instalar rsyslog e git
+####instalar rsyslog e git
 apt-get install -y rsyslog-mysql git
 
-#instalar phpmyadmin
+####instalar phpmyadmin
 apt-get install -y phpmyadmin
 
-# Clone do repositório
+#### Clone do repositório
 cd /var/www/html/
 git clone https://github.com/bylltec-projetos/Gestor-Log-Mikrotik-Linux.git
 
-# Configuração do rsyslog.conf
+#### Configuração do rsyslog.conf
 sed -i 's/#module(load="imudp")/module(load="imudp")/' /etc/rsyslog.conf
 sed -i 's/#input(type="imudp" port="514")/input(type="imudp" port="514")/' /etc/rsyslog.conf
 sudo systemctl restart systemd-journald
 
 
-# Configuração do apache2
+#### Configuração do apache2
 sed -i 's|DocumentRoot /var/www/html|DocumentRoot /var/www/html/Gestor-Log-Mikrotik-Linux|' /etc/apache2/sites-available/000-default.conf
 systemctl restart apache2
 
-# Importação das tabelas do banco de dados
+#### Importação das tabelas do banco de dados
 cd /var/www/html/Gestor-Log-Mikrotik-Linux
 mysql -p Syslog < usuarios.sql
 mysql -p Syslog < usuario_log.sql
 
-# Configuração do arquivo site.php
+#### Configuração do arquivo site.php
 sed -i 's/\$username = ""/\$username = "gestorlog"/' /var/www/html/Gestor-Log-Mikrotik-Linux/site/Connections/site.php
 sed -i 's/\$password = ""/\$password = "@#gestorlog"/' /var/www/html/Gestor-Log-Mikrotik-Linux/site/Connections/site.php
 
-# Permissões de pasta
+#### Permissões de pasta
 chmod -R 775 /var/www/html/Gestor-Log-Mikrotik-Linux
 
-# Agendamento do backup no crontab a cada 2 horas
-echo "0 */2 * * * php /var/www/html/Gestor-Log-Mikrotik-Linux/site/gestorserver/log/backuplog/action_backup_agendado.php" >> /etc/crontab
+#### Agendar no crontab para o php execultar o backup a cada 2 hora comando abaixo e adicionando a linha conforme necessidade
+```
+crontab -e
+```
+```
+0 */2 * * * php /var/www/html/Gestor-Log-Mikrotik-Linux/site/gestorserver/log/backuplog/action_backup_agendado.php
+```
 
-# Agendamento do backup no crontab todo domingo
+#### Agendamento do backup no crontab todo domingo
 #echo "0 0 * * 0 php /var/www/html/Gestor-Log-Mikrotik-Linux/site/gestorserver/log/backuplog/action_backup_agendado.php" >> /etc/crontab
 
-
-# Configuração do backup diário
+#### Configuração do backup diário
+```
 mkdir /var/backups/gestorlog
 chmod -R 775 /var/backups/gestorlog
 mkdir /var/backups/gestorlog/diario
 chmod -R 775 /var/backups/gestorlog/diario
-
-# Criação do script de backup diário
+```
+#### Criação do script de backup diário
+```
 cat <<EOF > /var/backups/gestorlog/backup_diario.sh
 #!/bin/bash
 ORIGEM_PASTA=/var/backups/gestorlog/diario
@@ -91,21 +97,24 @@ DATA=\$(date +"%m-%d-%Y")
 ARQUIVO_DESTINO="/var/backups/gestorlog/\$DATA.tar.gz"
 echo "Backup está sendo gerado em \$ARQUIVO_DESTINO, por favor aguarde..."
 /bin/tar -czvf \$ARQUIVO_DESTINO \$ORIGEM_PASTA
-# Apaga backup após compactar
+#### Apaga backup após compactar
 rm /var/backups/gestorlog/diario/*
-# Reinicia syslog
+#### Reinicia syslog
 sudo systemctl restart systemd-journald
 EOF
-
-# Permissões do script de backup diário
+```
+#### Permissões do script de backup diário
+```
 chmod +x /var/backups/gestorlog/backup_diario.sh
-
-# Agendamento do backup diário no crontab
-echo "0 1 * * * /bin/bash /var/backups/gestorlog/backup_diario.sh" >> /etc/crontab
-
-# FIM
-
-
+```
+#### Agendamento do backup diário no crontab
+```
+crontab -e
+```
+Adicione a linha abaixo caso queira que seja feito todo dia as 1 da manhã
+```
+0 1 * * * /bin/bash /var/backups/gestorlog/backup_diario.sh
+```
 
 #### Instação em Debian 9
 #Caso você use o APT, adicione a seguinte linha em /etc/apt/sources.list 
@@ -174,9 +183,10 @@ chmod -R 775 /var/www/html/Gestor-Log-Mikrotik-Linux
 Agendar no crontab para o php execultar o backup a cada 2 hora comando abaixo e adicionando a linha conforme necessidade
 ```
 crontab -e
-```` 
+```
+```
 0 */2 * * * php /var/www/html/Gestor-Log-Mikrotik-Linux/site/gestorserver/log/backuplog/action_backup_agendado.php
-
+```
 Criar uma pasta para o backup e dar as devidas permissao de leitura e escrita
 ```
 mkdir /var/backups/gestorlog
