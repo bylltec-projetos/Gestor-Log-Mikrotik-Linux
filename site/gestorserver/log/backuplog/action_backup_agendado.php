@@ -9,5 +9,5 @@ $saida_comando_compactar = shell_exec("cd /var/backups/gestorlog/diario/;
 $sql_limpa_tabela = "TRUNCATE TABLE SystemEvents";
 $stmt_limpa_tabela = $pdo->prepare($sql_limpa_tabela);
 $stmt_limpa_tabela->execute();
-$saida_comando_limpar_arquivos = shell_exec("cd /var/log/; rm syslog*; rm messages*; rm user*; /etc/init.d/apache2 restart; /etc/init.d/mysql restart; /etc/init.d/rsyslog restart;");
+$saida_comando_limpar_arquivos = shell_exec("cd /var/log/; rm journal/; rm messages*; rm user*; /etc/init.d/apache2 restart; /etc/init.d/mariadb restart; systemctl restart systemd-journald;");
 ?>
