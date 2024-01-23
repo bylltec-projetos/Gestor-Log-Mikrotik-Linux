@@ -6,70 +6,89 @@ Ferramenta para capturar logs de conexões em uma rede provida por um mikrotik (
 ### Instalação em Debian 12
 
 #### atualizar lista de pacotes
+```
 apt-get update
-
+```
 #### instalar o apache
+```
 apt-get install -y apache2 
-
+```
 #### instalar o php e suas extensões
+```
 apt-get install php8.2 php8.2-mbstring php8.2-mysql php8.2-xml -y
-
+```
 #### habilitar a extensão pdo_mysql do php
+```
 sed -i 's|;extension=pdo_mysql|extension=pdo_mysql|g' /etc/php/8.2/apache2/php.ini
-
+```
 #### instalar mariadb
+```
 apt-get install mariadb-server -y
-
+```
 #### executar o script de instalação segura do mariadb
+```
 mysql_secure_installation
-
+```
 #### logar no mariadb
+```
 mysql -u root -p
-
+```
 #### criar um usuario no mariadb para o sistema/site
+```
 CREATE USER 'gestorlog'@'localhost' IDENTIFIED BY '@#gestorlog';
-
+```
 #### atribuir privilegios ao novo usuario
+```
 GRANT ALL PRIVILEGES ON * . * TO 'gestorlog'@'localhost';
-
+```
 #### executar o comando flush privileges para as mudanças entrar em vigor imediatamente
+```
 FLUSH PRIVILEGES;
-
+```
 #### sair do mariadb
+```
 exit
-
+```
 ####instalar rsyslog e git
+```
 apt-get install -y rsyslog-mysql git
-
+```
 ####instalar phpmyadmin
+```
 apt-get install -y phpmyadmin
-
+```
 #### Clone do repositório
+```
 cd /var/www/html/
 git clone https://github.com/bylltec-projetos/Gestor-Log-Mikrotik-Linux.git
-
+```
 #### Configuração do rsyslog.conf
+```
 sed -i 's/#module(load="imudp")/module(load="imudp")/' /etc/rsyslog.conf
 sed -i 's/#input(type="imudp" port="514")/input(type="imudp" port="514")/' /etc/rsyslog.conf
 sudo systemctl restart systemd-journald
-
+```
 
 #### Configuração do apache2
+```
 sed -i 's|DocumentRoot /var/www/html|DocumentRoot /var/www/html/Gestor-Log-Mikrotik-Linux|' /etc/apache2/sites-available/000-default.conf
 systemctl restart apache2
-
+```
 #### Importação das tabelas do banco de dados
+```
 cd /var/www/html/Gestor-Log-Mikrotik-Linux
 mysql -p Syslog < usuarios.sql
 mysql -p Syslog < usuario_log.sql
-
+```
 #### Configuração do arquivo site.php
+```
 sed -i 's/\$username = ""/\$username = "gestorlog"/' /var/www/html/Gestor-Log-Mikrotik-Linux/site/Connections/site.php
 sed -i 's/\$password = ""/\$password = "@#gestorlog"/' /var/www/html/Gestor-Log-Mikrotik-Linux/site/Connections/site.php
-
+```
 #### Permissões de pasta
+```
 chmod -R 775 /var/www/html/Gestor-Log-Mikrotik-Linux
-
+```
 #### Agendar no crontab para o php execultar o backup a cada 2 hora comando abaixo e adicionando a linha conforme necessidade
 ```
 crontab -e
@@ -99,7 +118,8 @@ echo "Backup está sendo gerado em \$ARQUIVO_DESTINO, por favor aguarde..."
 /bin/tar -czvf \$ARQUIVO_DESTINO \$ORIGEM_PASTA
 #### Apaga backup após compactar
 rm /var/backups/gestorlog/diario/*
-#### Reinicia syslog
+#### Reinicia syslog e limpa dados antigos de log
+journalctl --rotate
 sudo systemctl restart systemd-journald
 EOF
 ```
