@@ -5,55 +5,55 @@ Ferramenta para capturar logs de conexões em uma rede provida por um mikrotik (
 
 ### Instalação em Debian 12
 
-#### atualizar lista de pacotes
+#### Atualizar lista de pacotes
 ```
 apt-get update
 ```
-#### instalar o apache
+#### Instalar o apache
 ```
 apt-get install -y apache2 
 ```
-#### instalar o php e suas extensões
+#### Instalar o php e suas extensões
 ```
 apt-get install php8.2 php8.2-mbstring php8.2-mysql php8.2-xml -y
 ```
-#### habilitar a extensão pdo_mysql do php
+#### Habilitar a extensão pdo_mysql do php
 ```
 sed -i 's|;extension=pdo_mysql|extension=pdo_mysql|g' /etc/php/8.2/apache2/php.ini
 ```
-#### instalar mariadb
+#### Instalar mariadb
 ```
 apt-get install mariadb-server -y
 ```
-#### executar o script de instalação segura do mariadb
+#### Executar o script de instalação segura do mariadb
 ```
 mysql_secure_installation
 ```
-#### logar no mariadb
+#### Logar no mariadb
 ```
 mysql -u root -p
 ```
-#### criar um usuario no mariadb para o sistema/site
+#### Criar um usuario no mariadb para o sistema/site
 ```
 CREATE USER 'gestorlog'@'localhost' IDENTIFIED BY '@#gestorlog';
 ```
-#### atribuir privilegios ao novo usuario
+#### Atribuir privilegios ao novo usuario
 ```
 GRANT ALL PRIVILEGES ON * . * TO 'gestorlog'@'localhost';
 ```
-#### executar o comando flush privileges para as mudanças entrar em vigor imediatamente
+#### Executar o comando flush privileges para as mudanças entrar em vigor imediatamente
 ```
 FLUSH PRIVILEGES;
 ```
-#### sair do mariadb
+#### Sair do mariadb
 ```
 exit
 ```
-####instalar rsyslog e git
+#### Instalar rsyslog e git
 ```
 apt-get install -y rsyslog-mysql git
 ```
-####instalar phpmyadmin
+#### Instalar phpmyadmin
 ```
 apt-get install -y phpmyadmin
 ```
